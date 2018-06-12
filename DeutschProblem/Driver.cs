@@ -9,6 +9,7 @@ namespace DeutschProblem
         {
             using (var sim = new QuantumSimulator())
             {
+                sim.OnLog += (msg) => { System.Console.WriteLine(msg); };
                 // Try initial values
                 var res = DeutschProblemTest.Run(sim).Result;
                 System.Console.WriteLine(
