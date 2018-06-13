@@ -27,16 +27,21 @@
                 let q1 = M(qubits[0]);
                 let q2 = M(qubits[1]);
                 if (q1 == One && q2 == One) {
-                    Message("11");
+                    Message("11: f1");
+                    f1(x, y);
                 } elif (q1 == One && q2 == Zero) {
-                    Message("10");
+                    Message("10: f2");
+                    f2(x, y);
                 } elif (q1 == Zero && q2 == One) {
-                    Message("01");
+                    Message("01: f3");
+                    f3(x, y);
                 } else {
-                    Message("00");
+                    Message("00: f4");
+                    f4(x, y);
                 }
+                Set (Zero, qubits[0]);
+                Set (Zero, qubits[1]);
             }
-            CNOT(x, y);
         }
     }
 
@@ -64,8 +69,8 @@
         body
         {
             Message("calling f3");
-            X(x);
             CNOT(x, y);
+            X(y);
         }
     }
 
@@ -82,16 +87,24 @@
     {
         body
         {
+            // we want to check whether Uf(0) == Uf(1) for random function Uf
+            // prepare input state for Uf
             mutable res = 0;
             using (qubits = Qubit[2])
             {
-                Set (One, qubits[0]);
-                Set (Zero, qubits[1]);
-                Uf (qubits[0], qubits[1]);
-                let y = M (qubits[1]);
-                if (y == One)
-                {
-                    set res = 1;
+                let x = qubits[0];
+                let y = qubits[1];
+                Set (One, x);
+                Set (One, y);
+                H (x);
+                H (y);
+                Uf (x, y);
+                H (x);
+                let input = M (x);
+                if (input == One) {
+                    Message("Uf(0) == Uf(1)");
+                } else {
+                     Message("Uf(0) != Uf(1)");
                 }
                 Set(Zero, qubits[0]);
                 Set(Zero, qubits[1]);
